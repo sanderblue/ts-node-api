@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import {createConnection} from 'typeorm';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {DatabaseConnection} from './config/connection';
 import {Routes} from './routes';
 
@@ -28,10 +28,18 @@ createConnection(DatabaseConnection)
 
   // setup express app here
   // ...
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    // Enable CORS
+    res.header('Access-Control-Allow-Origin', req.get('origin'));
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    next();
+  })
 
   // start express server
   app.listen(4040);
 
-  console.log('Express server has started on port 3000. Open http://localhost:3000/users to see results');
+  console.log('Express server has started on port 4040. Open http://localhost:4040/users to see results');
 
 }).catch(error => console.log(error));
