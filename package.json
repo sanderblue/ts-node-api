@@ -8,13 +8,17 @@
       "typescript": "2.5.2"
    },
    "dependencies": {
-      "typeorm": "0.1.6",
-      "reflect-metadata": "^0.1.10",
-      "mongodb": "^2.2.31",
+      "body-parser": "^1.18.1",
+      "csvtojson": "^1.1.9",
       "express": "^4.15.4",
-      "body-parser": "^1.18.1"
+      "moment": "^2.20.1",
+      "mongodb": "^2.2.31",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.1.6"
    },
    "scripts": {
-      "start": "ts-node src/index.ts"
+      "start": "ts-node src/index.ts",
+      "build": "tsc",
+      "build.watch": "tsc -w"
    }
 }

@@ -1,10 +1,17 @@
 import {getRepository} from 'typeorm';
 import {NextFunction, Request, Response} from 'express';
 import {DailySnowDepthObservation} from '../entity/DailySnowDepthObservation';
+import {Worker} from '../workers/work';
 
 export class SnowDepthController {
 
   private dailySnowDepthRepository = getRepository(DailySnowDepthObservation);
+
+  private worker: Worker;
+
+  constructor() {
+    this.worker = new Worker();
+  }
 
   async all(req: Request, res: Response, next: NextFunction) {
     console.log('HERE!');
@@ -27,5 +34,11 @@ export class SnowDepthController {
 
   async remove(req: Request, res: Response, next: NextFunction) {
     await this.dailySnowDepthRepository.removeById(req.params.id);
+  }
+
+  async download(req: Request, res: Response, next: NextFunction) {
+    this.worker.doWork().then(() => {
+      res.send('DONE');
+    });
   }
 }
