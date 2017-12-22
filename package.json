@@ -4,6 +4,7 @@
    "description": "Awesome project developed with TypeORM.",
    "devDependencies": {
       "@types/csvtojson": "^1.1.5",
+      "@types/mongodb": "^2.2.18",
       "@types/node": "^8.0.29",
       "@types/yargs": "^10.0.0",
       "ts-node": "3.3.0",
@@ -14,7 +15,7 @@
       "csvtojson": "^1.1.9",
       "express": "^4.15.4",
       "moment": "^2.20.1",
-      "mongodb": "^2.2.31",
+      "mongodb": "^2.2.33",
       "reflect-metadata": "^0.1.10",
       "typeorm": "0.1.6",
       "yargs": "^10.0.3"

@@ -2,9 +2,12 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as moment from 'moment';
 
+import { MongoConnectionOptions } from 'typeorm/driver/mongodb/MongoConnectionOptions';
 import { DailySnowDepthObservation } from '../entity/DailySnowDepthObservation';
 import { DataAggregator } from '../services/DataAggregator';
+import { DatabaseConnection } from '../config/connection';
 import { DataTransformer } from '../services/DataTransformer';
+import { DataUploader } from '../services/DataUploader';
 import { HourlySnowDepthObservation } from '../entity/HourlySnowDepthObservation';
 
 export class Worker {
@@ -15,6 +18,14 @@ export class Worker {
 
   private dataAggregator: DataAggregator;
 
+  private dataUploader: DataUploader;
+
+  private databaseConnection: MongoConnectionOptions;
+
+  private hourlySnowDepthCollection: string = 'hourly_snow_depth_observations';
+
+  private dailySnowDepthCollection: string = 'daily_snow_depth_observations';
+
   constructor(options: any = {}) {
     this.options = {
       startDate: options.startDate ? options.startDate : new Date(),
@@ -23,16 +34,8 @@ export class Worker {
 
     this.dataTransformer = new DataTransformer();
     this.dataAggregator = new DataAggregator();
-  }
-
-  public execute() {
-    console.log('Doing work...');
-    this.doWork().then((file) => {
-      console.log('Done working. Download snow depth observations complete.', file);
-
-      // this.dataTransformer.convertCsvFileToJson(file.path)
-      //   .then(this.aggregateData);
-    });
+    this.dataUploader = new DataUploader();
+    this.databaseConnection = DatabaseConnection;
   }
 
   public async doWork() {
@@ -40,16 +43,30 @@ export class Worker {
     const endDate = new Date(this.options.endDate);
     const url = this.getSnowDepthUrl(startDate, endDate);
 
+    let observationsData = [];
+
     const download = await this.downloadToFile(url, `/www/ts-node-api/tmp/test.csv`);
 
-    // console.log('Download:', download);
+    console.log('\n\n');
+    // console.log('download:', download);
+    //
+    const hourlyData = await this.dataTransformer.convertCsvFileToJson(download.path);
+    const dailyData = this.dataAggregator.aggregateDailySnowDepthData(hourlyData);
 
-    const jsonData = await this.dataTransformer.convertCsvFileToJson(download.path);
-    const result = this.dataTransformer.normalizeJson(jsonData);
+    console.log('dailyData:', dailyData);
 
-    console.log('CSV to JSON result:', result);
+    this.uploadData(this.dailySnowDepthCollection, dailyData);
 
-    return result;
+    // const result = this.dataTransformer.normalizeJson(data);
+
+    // console.log('RESULT:', result);
+    console.log('\n\n');
+  }
+
+  public async convertedJsonDataFromFile(file) {
+    const data = await this.dataTransformer.convertCsvFileToJson(file.path);
+
+    return data;
   }
 
   public downloadToFile(url: string, dest: string = './'): Promise<any> {
@@ -82,5 +99,28 @@ export class Worker {
     const endDateFormatted = moment(endDate).format('YYYY-MM-DD');;
 
     return `http://www.nwac.us/data-portal/csv/location/mt-hood/sensortype/snow_depth/start-date/${startDateFormatted}/end-date/${endDateFormatted}/`;
+  }
+
+  private uploadData(collection, data) {
+    const connectionUrl = this.getMongoUrl();
+
+    this.dataUploader.uploadMultiple(connectionUrl, [
+      {
+        collection: collection,
+        data: data
+      }
+    ]).then((results) => {
+      console.log('Successfully add data to database.');
+    }).catch((err: Error) => {
+      throw err;
+    });
+  }
+
+  private getMongoUrl() {
+    const username = this.databaseConnection.username;
+    const password = this.databaseConnection.password;
+    const db = this.databaseConnection.database;
+
+    return `mongodb://${username}:${password}@sanderblue.com:27017,sanderblue.com:27017/${db}`;
   }
 }
