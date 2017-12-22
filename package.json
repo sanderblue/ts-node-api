@@ -3,8 +3,10 @@
    "version": "0.0.1",
    "description": "Awesome project developed with TypeORM.",
    "devDependencies": {
-      "ts-node": "3.3.0",
+      "@types/csvtojson": "^1.1.5",
       "@types/node": "^8.0.29",
+      "@types/yargs": "^10.0.0",
+      "ts-node": "3.3.0",
       "typescript": "2.5.2"
    },
    "dependencies": {
@@ -14,11 +16,13 @@
       "moment": "^2.20.1",
       "mongodb": "^2.2.31",
       "reflect-metadata": "^0.1.10",
-      "typeorm": "0.1.6"
+      "typeorm": "0.1.6",
+      "yargs": "^10.0.3"
    },
    "scripts": {
       "start": "ts-node src/index.ts",
       "build": "tsc",
-      "build.watch": "tsc -w"
+      "build.watch": "tsc -w",
+      "work": "ts-node src/workers/index.ts"
    }
 }

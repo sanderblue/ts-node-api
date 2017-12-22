@@ -1,7 +1,7 @@
 import {getRepository} from 'typeorm';
 import {NextFunction, Request, Response} from 'express';
 import {DailySnowDepthObservation} from '../entity/DailySnowDepthObservation';
-import {Worker} from '../workers/work';
+import {Worker} from '../workers/worker';
 
 export class SnowDepthController {
 
