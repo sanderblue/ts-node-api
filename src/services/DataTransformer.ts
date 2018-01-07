@@ -22,8 +22,6 @@ export class DataTransformer {
       csv()
         .fromFile(filePath)
         .on('json', (data: any) => {
-
-
           // this.normalizeData(data);
 
           let observationDateTime: Date;

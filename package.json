@@ -4,8 +4,10 @@
    "description": "Awesome project developed with TypeORM.",
    "devDependencies": {
       "@types/csvtojson": "^1.1.5",
+      "@types/jsonp": "^0.2.0",
       "@types/mongodb": "^2.2.18",
       "@types/node": "^8.0.29",
+      "@types/node-schedule": "^1.2.1",
       "@types/yargs": "^10.0.0",
       "ts-node": "3.3.0",
       "typescript": "2.5.2"
@@ -14,16 +16,21 @@
       "body-parser": "^1.18.1",
       "csvtojson": "^1.1.9",
       "express": "^4.15.4",
+      "jsonp": "^0.2.1",
       "moment": "^2.20.1",
       "mongodb": "^2.2.33",
+      "node-schedule": "^1.2.5",
       "reflect-metadata": "^0.1.10",
       "typeorm": "0.1.6",
       "yargs": "^10.0.3"
    },
    "scripts": {
       "start": "ts-node src/index.ts",
+      "start.pm2": "pm2 start ./build/index.js --name ts-node-api --watch",
       "build": "tsc",
       "build.watch": "tsc -w",
-      "work": "ts-node src/workers/index.ts"
+      "work.snow": "ts-node src/workers/snow/index.ts",
+      "work.snow.cron": "ts-node src/workers/snow/index.ts --cron",
+      "work.wx": "ts-node src/workers/wx/index.ts"
    }
 }
