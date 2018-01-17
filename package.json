@@ -33,7 +33,7 @@
       "build.watch": "tsc -w",
       "work.snow": "node build/workers/snow/index.js",
       "work.snow.cron": "node build/workers/snow/index.js --cron",
-      "work.snow.cron.pm2": "pm2 start build/workers/snow/index.js --name cron-snow -- --cron",
+      "work.snow.cron.pm2": "tsc && pm2 start build/workers/snow/index.js --name cron-snow -- --cron",
       "work.wx": "ts-node src/workers/wx/index.ts"
    }
 }
