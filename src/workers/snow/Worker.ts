@@ -42,7 +42,8 @@ export class Worker {
     const startDate = new Date(this.options.startDate);
     const endDate = new Date(this.options.endDate);
     const url = this.getSnowDepthUrl(startDate, endDate);
-    const download = await this.downloadToFile(url, `/www/ts-node-api/tmp/test.csv`);
+    const dir = process.cwd();
+    const download = await this.downloadToFile(url, `${dir}/tmp/test.csv`);
     const hourlyData = await this.dataTransformer.convertCsvFileToJson(download.path);
     const dailyData = this.dataAggregator.aggregateDailySnowDepthData(hourlyData);
 
