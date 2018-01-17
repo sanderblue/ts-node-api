@@ -1,7 +1,8 @@
 import * as yargs from 'yargs';
 import * as schedule from 'node-schedule';
 
-import {Worker} from './Worker';
+import { Worker } from './Worker';
+import { logger } from '../../logger/logger';
 
 const singleRun = yargs.argv.cron ? false : true;
 
@@ -15,7 +16,7 @@ function execute(
   startDate: Date = new Date(),
   endDate: Date = new Date()
 ) {
-  console.log('Executing worker run at ', new Date().toLocaleString('en-US'));
+  logger.info('Executing worker run at ', new Date().toLocaleString('en-US'));
 
   const options = {
     startDate: startDate,
@@ -25,7 +26,7 @@ function execute(
   const worker = new Worker(options);
 
   worker.doWork().then(() => {
-    console.log('Work completed at ', new Date().toLocaleString('en-US'), '\n\n');
+    logger.info('Work completed at ', new Date().toLocaleString('en-US'));
   });
 }
 
@@ -39,7 +40,7 @@ function executeCron() {
     const startDate = new Date();
     const endDate = new Date();
 
-    console.log('Running cron job at ', startDate.toLocaleString('en-US'));
+    logger.info('Running cron job at ', startDate.toLocaleString('en-US'));
 
     execute(startDate, endDate);
   });

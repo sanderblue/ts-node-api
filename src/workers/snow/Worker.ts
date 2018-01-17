@@ -9,6 +9,7 @@ import { DatabaseConnection } from '../../config/connection';
 import { DataTransformer } from '../../services/DataTransformer';
 import { DataUploader } from '../../services/DataUploader';
 import { HourlySnowDepthObservation } from '../../entity/HourlySnowDepthObservation';
+import { logger } from '../../logger/logger';
 
 export class Worker {
 
@@ -26,6 +27,8 @@ export class Worker {
 
   private dailySnowDepthCollection: string = 'daily_snow_depth_observations';
 
+  private logger: any;
+
   constructor(options: any = {}) {
     this.options = {
       startDate: options.startDate ? options.startDate : new Date(),
@@ -36,6 +39,9 @@ export class Worker {
     this.dataAggregator = new DataAggregator();
     this.dataUploader = new DataUploader();
     this.databaseConnection = DatabaseConnection;
+    this.logger = logger;
+
+    console.log('LOGGER', logger);
   }
 
   public async doWork(): Promise<any> {
@@ -58,11 +64,10 @@ export class Worker {
 
     return Promise.all(promises)
       .then(() => {
-        console.log(`ALL DONE!`);
-        console.log('\n\n');
+        this.logger.info(`ALL DONE!`);
       })
-      .catch((err) => {
-        console.log('ERROR OCCURRED!');
+      .catch((err: Error) => {
+        this.logger.error(`ERROR: ${err.message}`);
       });
   }
 
@@ -85,11 +90,11 @@ export class Worker {
           resolve(file);
         });
       }).on('error', (err: Error) => {
-        console.error('ERROR:', err.message);
+        this.logger.error(`ERROR: ${err.message}`);
 
         // Delete the file async
         fs.unlink(dest, () => {
-          console.log('Error occurred. Deleted and unlinking file.');
+          this.logger.info('Error occurred. Deleted and unlinking file.');
 
           reject(err);
         });
@@ -113,11 +118,9 @@ export class Worker {
       data,
       true
     ).then((results) => {
-      console.log('Results:', results);
-
-      console.log(`Successfully added data for date ${data.date} at location ${data.location} to database.`);
+      this.logger.info(`Successfully added data for date ${data.date} at location ${data.location} to database.`);
     }).catch((err: Error) => {
-      throw err;
+      this.logger.error(`ERROR: ${err.message}`);
     });
   }
 
@@ -130,9 +133,9 @@ export class Worker {
         data: data
       }
     ]).then((results) => {
-      console.log('Successfully add data to database.');
+
     }).catch((err: Error) => {
-      throw err;
+      this.logger.error(`ERROR: ${err.message}`);
     });
   }
 
