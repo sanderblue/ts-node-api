@@ -1,7 +1,7 @@
 import * as yargs from 'yargs';
 import * as schedule from 'node-schedule';
 
-import {Worker} from './worker';
+import {Worker} from './Worker';
 
 const singleRun = yargs.argv.cron ? false : true;
 
