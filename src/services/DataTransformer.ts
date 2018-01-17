@@ -51,7 +51,7 @@ export class DataTransformer {
           });
         })
         .on('done', (error: any) => {
-          console.log('Finished.', error);
+          // console.log('Finished.', error);
 
           // readStream.close();
 

@@ -40,8 +40,6 @@ export class Worker {
     this.dataUploader = new DataUploader();
     this.databaseConnection = DatabaseConnection;
     this.logger = logger;
-
-    console.log('LOGGER', logger);
   }
 
   public async doWork(): Promise<any> {

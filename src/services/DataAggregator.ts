@@ -15,7 +15,7 @@ export class DataAggregator {
   public aggregateData(data: any) {
     const dailyData = this.aggregateDailySnowDepthData(data);
 
-    console.log('Daily Data:', dailyData);
+    // console.log('Daily Data:', dailyData);
 
     return dailyData;
   }

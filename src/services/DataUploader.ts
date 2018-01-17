@@ -2,7 +2,7 @@ import * as mongodb from 'mongodb';
 
 interface InsertManyPayload {
   collection: string;
-  data: Array<any>;
+  data: any[];
 }
 
 export class DataUploader {
@@ -34,8 +34,8 @@ export class DataUploader {
         db.collection(collection)
           .insertMany(data)
           .then((result: any) => {
-            console.log(`Succesfully added data to the ${collection} collection.`);
-            console.log('Closing connection.');
+            // console.log(`Succesfully added data to the ${collection} collection.`);
+            // console.log('Closing connection.');
 
             db.close();
 
@@ -78,8 +78,8 @@ export class DataUploader {
             { upsert: true }
           )
           .then((result: any) => {
-            console.log(`Succesfully added data to the ${collection} collection.`);
-            console.log('Closing connection.');
+            // console.log(`Succesfully added data to the ${collection} collection.`);
+            // console.log('Closing connection.');
 
             db.close();
 
