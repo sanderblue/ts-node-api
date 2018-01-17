@@ -29,8 +29,8 @@
       "start.pm2": "pm2 start ./build/index.js --name ts-node-api --watch",
       "build": "tsc",
       "build.watch": "tsc -w",
-      "work.snow": "ts-node src/workers/snow/index.ts",
-      "work.snow.cron": "ts-node src/workers/snow/index.ts --cron",
+      "work.snow": "node build/workers/snow/index.js",
+      "work.snow.cron": "node build/workers/snow/index.js --cron",
       "work.wx": "ts-node src/workers/wx/index.ts"
    }
 }
