@@ -29,6 +29,7 @@
    "scripts": {
       "start": "ts-node src/index.ts",
       "start.pm2": "pm2 start ./build/index.js --name ts-node-api --watch",
+      "start.pm2.prod": "tsc && pm2 start ./build/index.js --name ts-node-api",
       "build": "tsc",
       "build.watch": "tsc -w",
       "work.snow": "node build/workers/snow/index.js",
