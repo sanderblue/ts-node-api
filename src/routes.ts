@@ -39,6 +39,12 @@ export const Routes = [
     action: 'one'
   },
   {
+    method: 'get',
+    route: '/snow-depth/daily/:location/:startDate/:endDate',
+    controller: SnowDepthController,
+    action: 'allByDateRange'
+  },
+  {
     method: 'post',
     route: '/snow-depth/daily',
     controller: SnowDepthController,

@@ -11,7 +11,7 @@ export class SnowDepthController {
   }
 
   async all(req: Request, res: Response, next: NextFunction) {
-    console.log('HERE!');
+    console.log('Action:all');
 
     // Enable CORS
     res.header('Access-Control-Allow-Origin', req.get('origin'));
@@ -31,5 +31,25 @@ export class SnowDepthController {
 
   async remove(req: Request, res: Response, next: NextFunction) {
     await this.dailySnowDepthRepository.removeById(req.params.id);
+  }
+
+  async allByDateRange(req: Request, res: Response, next: NextFunction) {
+    console.log('Action:allByDateRange', req.params);
+
+    const startTimestamp = new Date(req.params.startDate).getTime();
+    const endTimestamp = new Date(req.params.endDate).getTime();
+
+    return this.dailySnowDepthRepository.find({
+      where: {
+        location: req.params.location,
+        timestamp: {
+          $gte: startTimestamp,
+          $lte: endTimestamp,
+        }
+      },
+      order: {
+        timestamp: 1
+      }
+    });
   }
 }
