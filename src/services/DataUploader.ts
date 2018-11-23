@@ -1,4 +1,6 @@
 import * as mongodb from 'mongodb';
+import { logger } from '../logger/logger';
+import { TreeChildren } from 'typeorm';
 
 interface InsertManyPayload {
   collection: string;
@@ -6,90 +8,117 @@ interface InsertManyPayload {
 }
 
 export class DataUploader {
-  constructor() {}
+  private logger;
 
-  uploadMultiple(url: string, payloads: Array<any>): Promise<any> {
-     let promises: Promise<any>[] = [];
+  private db;
 
-     for (let i = 0; i < payloads.length; i++) {
-       let uploadPromise = this.upload(
-         url,
-         payloads[i].collection,
-         payloads[i].data
-       );
+  constructor(connUrl: string) {
+    this.logger = logger;
 
-       promises.push(uploadPromise);
-     }
+    mongodb.MongoClient.connect(
+      connUrl,
+      (err: Error, db: any) => {
+        this.db = db;
 
-    return Promise.all(promises);
+        console.log('Connected...');
+      },
+    );
   }
 
-  upload(
+  public async uploadMultiple(url: string, payloads: Array<any>): Promise<any> {
+    const promises: Promise<any>[] = [];
+    const payload = payloads[0];
+    const snowData = payload.data;
+
+    for (let i = 0; i < snowData.length; i++) {
+      promises.push(this.findAndModify(payload.collection, snowData[i]));
+    }
+
+    const result = await Promise.all(promises);
+    this.db.close();
+  }
+
+  public async findAndModify(collection, doc) {
+    try {
+      return await this.db.collection(collection).findAndModify(
+        {
+          date: doc.date,
+          location: doc.location,
+        },
+        [],
+        doc,
+        { upsert: true },
+      );
+    } catch (err) {
+      this.logger.error(`ERROR: ${err.message}`);
+    }
+  }
+
+  public upload(
     url: string,
     collection: string,
-    data: Array<any> = []
+    data: Array<any> = [],
   ): Promise<any> {
     return new Promise((resolve: any) => {
-      mongodb.MongoClient.connect(url, (err: Error, db: any) => {
-        db.collection(collection)
-          .insertMany(data)
-          .then((result: any) => {
-            // console.log(`Succesfully added data to the ${collection} collection.`);
-            // console.log('Closing connection.');
+      mongodb.MongoClient.connect(
+        url,
+        (err: Error, db: any) => {
+          db.collection(collection)
+            .insertMany(data)
+            .then((result: any) => {
+              // console.log(`Succesfully added data to the ${collection} collection.`);
+              // console.log('Closing connection.');
 
-            db.close();
+              db.close();
 
-            resolve({
-              collection: collection,
-              data: data,
+              resolve({ collection: collection, data: data });
             });
-          }
-        );
-      });
+        },
+      );
     });
   }
 
-  findAndModifyDocument(
+  /**
+   * @deprecated
+   */
+  public findAndModifyDocument(
     url: string,
     collection: string,
     doc,
-    upsert: boolean = true
+    upsert: boolean = true,
   ): Promise<any> {
     return new Promise((resolve: any, reject: any) => {
-      const options = {
-        poolSize: 100,
-        keepAlive: 40000, // default: 30000
-      };
+      const options = { poolSize: 100, keepAlive: 40000 }; // default: 30000
 
-      mongodb.MongoClient.connect(url, options, (err: Error, db: any) => {
-        if (err) {
-          console.log('Mongo error:', err);
-          return reject(err);
-        }
+      mongodb.MongoClient.connect(
+        url,
+        options,
+        (err: Error, db: any) => {
+          if (err) {
+            console.log('Mongo error:', err);
+            return reject(err);
+          }
 
-        db.collection(collection)
-          .findAndModify(
-            {
-              date: doc.date,
-              location: doc.location
-            },
-            [],
-            doc,
-            { upsert: true }
-          )
-          .then((result: any) => {
-            // console.log(`Succesfully added data to the ${collection} collection.`);
-            // console.log('Closing connection.');
+          db.collection(collection)
+            .findAndModify(
+              {
+                date: doc.date,
+                location: doc.location,
+              },
+              [],
+              doc,
+              { upsert: true },
+            )
+            .then((result: any) => {
+              // console.log(`Succesfully added data to the ${collection} collection.`);
+              // console.log('Closing connection.');
 
-            db.close();
+              db.close();
 
-            resolve({
-              collection: collection,
-              data: doc,
+              resolve({ collection: collection, data: doc });
             });
-          })
-        ;
-      });
+        },
+      );
     });
   }
 }

@@ -8,6 +8,10 @@ const singleRun = yargs.argv.cron ? false : true;
 
 logger.log('info', 'Worker about to do work...');
 
+// const worker = new Worker();
+// worker.cleanUpData();
+
+
 if (yargs.argv.cron) {
   executeCron();
 } else {

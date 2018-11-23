@@ -1,6 +1,10 @@
 {
    "type": "mongodb",
-   "database": "test",
+   "host": "sanderblue.com",
+    "port": 27017,
+    "username": "admin",
+    "password": "ibmchinccd",
+    "database": "snow",
    "synchronize": true,
    "logging": false,
    "entities": [
