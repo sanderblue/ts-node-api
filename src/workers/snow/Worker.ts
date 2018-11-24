@@ -54,8 +54,6 @@ export class Worker {
     const authSource = `?authSource=${authDb}`;
     const connectionUrl = `mongodb://${connString}/${db}${authSource}`;
 
-    this.logger.info(`Connection URL: ${connectionUrl}`);
-
     return connectionUrl;
   }
 
