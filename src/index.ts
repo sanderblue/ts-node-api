@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import * as express from 'express';
@@ -7,7 +9,7 @@ import { DatabaseConnection } from './config/connection';
 import { Routes } from './routes';
 
 createConnection(DatabaseConnection)
-  .then(async connection => {
+  .then(async (connection) => {
     console.log('CONNECTION MADE???', connection);
 
     // create express app
@@ -15,7 +17,7 @@ createConnection(DatabaseConnection)
     app.use(bodyParser.json());
 
     // register express routes from defined application routes
-    Routes.forEach(route => {
+    Routes.forEach((route) => {
       (app as any)[route.method](
         route.route,
         (req: Request, res: Response, next: Function) => {
@@ -25,7 +27,7 @@ createConnection(DatabaseConnection)
             next,
           );
           if (result instanceof Promise) {
-            result.then(result =>
+            result.then((result) =>
               result !== null && result !== undefined
                 ? res.send(result)
                 : undefined,
@@ -58,4 +60,4 @@ createConnection(DatabaseConnection)
       'Express server has started on port 4040. Open http://localhost:4040/users to see results',
     );
   })
-  .catch(error => console.log(error));
+  .catch((error) => console.log(error));

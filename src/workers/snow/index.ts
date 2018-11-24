@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import * as yargs from 'yargs';
 import * as schedule from 'node-schedule';
 
@@ -11,17 +13,13 @@ logger.log('info', 'Worker about to do work...');
 // const worker = new Worker();
 // worker.cleanUpData();
 
-
 if (yargs.argv.cron) {
   executeCron();
 } else {
   execute(yargs.argv.startDate, yargs.argv.endDate);
 }
 
-function execute(
-  startDate: Date = new Date(),
-  endDate: Date = new Date()
-) {
+function execute(startDate: Date = new Date(), endDate: Date = new Date()) {
   logger.info('Executing worker run at ', new Date().toLocaleString('en-US'));
 
   const options = {
@@ -42,7 +40,9 @@ function execute(
  * e.g. 12:01am, 01:01am, 02:02am
  */
 function executeCron() {
-  logger.info(`CRON job scheduled to run at 1 minute past every hour - i.e. 01:01, 02:01, 03:01`);
+  logger.info(
+    `CRON job scheduled to run at 1 minute past every hour - i.e. 01:01, 02:01, 03:01`,
+  );
 
   schedule.scheduleJob('0 */1 * * *', () => {
     const startDate = new Date();
