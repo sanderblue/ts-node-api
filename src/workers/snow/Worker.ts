@@ -223,12 +223,4 @@ export class Worker {
 
     return `http://www.nwac.us/data-portal/csv/location/mt-hood/sensortype/snow_depth/start-date/${startDateFormatted}/end-date/${endDateFormatted}/`;
   }
-
-  // private getMongoUrl() {
-  //   const username = this.databaseConnection.username;
-  //   const password = this.databaseConnection.password;
-  //   const db = this.databaseConnection.database;
-
-  //   return `mongodb://${username}:${password}@sanderblue.com:27017,sanderblue.com:27017/${db}?authSource=admin`;
-  // }
 }

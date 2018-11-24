@@ -6,5 +6,4 @@ build/
 tmp/
 temp/
 logs/
-src/config/connection.ts
 .env
